@@ -68,21 +68,21 @@ export default function Dashboard() {
 
     const fetchUserForms = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/feedback/active');
+            const res = await axios.get('https://centralised-feedback-system.onrender.com/api/feedback/active');
             setActiveForms(res.data);
         } catch (error) { console.error(error); }
     };
 
     const fetchUserHistory = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/feedback/history');
+            const res = await axios.get('https://centralised-feedback-system.onrender.com/api/feedback/history');
             setUserHistory(res.data);
         } catch (error) { console.error(error); }
     };
 
     const fetchAdminData = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/feedback/all');
+            const res = await axios.get('https://centralised-feedback-system.onrender.com/api/feedback/all');
             setAdminForms(res.data);
         } catch (error) { console.error(error); }
     };
@@ -90,7 +90,7 @@ export default function Dashboard() {
     const deleteForm = async (formId) => {
         if (!window.confirm("Are you sure? This will delete all responses associated with this form.")) return;
         try {
-            await axios.delete(`http://localhost:5000/api/feedback/delete/${formId}`);
+            await axios.delete(`https://centralised-feedback-system.onrender.com/api/feedback/delete/${formId}`);
             toast.success("Form deleted");
             fetchAdminData();
             if (stats && stats.formId === formId) {
@@ -133,7 +133,7 @@ export default function Dashboard() {
 
     const viewStats = async (formId) => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/analytics/form/${formId}`);
+            const res = await axios.get(`https://centralised-feedback-system.onrender.com/api/analytics/form/${formId}`);
             const responses = res.data.responses || [];
 
             const timelineMap = {};
@@ -441,7 +441,7 @@ export default function Dashboard() {
                                         <div className="flex items-center gap-3">
                                             {stats.attachedPdf && (
                                                 <a
-                                                    href={`http://localhost:5000${stats.attachedPdf}`}
+                                                    href={`https://centralised-feedback-system.onrender.com${stats.attachedPdf}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors font-medium text-sm"

@@ -41,7 +41,7 @@ const CreateFormModal = ({ onClose, onCreated }) => {
                 formData.append("pdfFile", pdfFile);
             }
 
-            await axios.post("http://localhost:5000/api/feedback/create", formData, {
+            await axios.post("https://centralised-feedback-system.onrender.com/api/feedback/create", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success("Feedback Form Created");

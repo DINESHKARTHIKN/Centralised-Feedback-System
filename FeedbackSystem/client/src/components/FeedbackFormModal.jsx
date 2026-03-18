@@ -26,7 +26,7 @@ const FeedbackFormModal = ({ form, onClose, onSubmitSuccess }) => {
 
         setIsSubmitting(true);
         try {
-            await axios.post('http://localhost:5000/api/feedback/submit', {
+            await axios.post('https://centralised-feedback-system.onrender.com/api/feedback/submit', {
                 formId: form._id,
                 answers: formattedAnswers
             });
@@ -80,7 +80,7 @@ const FeedbackFormModal = ({ form, onClose, onSubmitSuccess }) => {
                                     </div>
                                 </div>
                                 <a
-                                    href={`http://localhost:5000${form.attachedPdf}`}
+                                    href={`https://centralised-feedback-system.onrender.com${form.attachedPdf}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-white text-indigo-600 font-bold border border-indigo-200 rounded-xl hover:bg-indigo-600 hover:text-white hover:border-transparent transition-all shadow-sm"
