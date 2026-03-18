@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+const API = "https://centralised-feedback-system.onrender.com";
 import toast from "react-hot-toast";
 import { Trash2, X, Plus, Calendar, Users, Type } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -41,7 +42,7 @@ const CreateFormModal = ({ onClose, onCreated }) => {
                 formData.append("pdfFile", pdfFile);
             }
 
-            await axios.post("https://centralised-feedback-system.onrender.com/api/feedback/create", formData, {
+            await axios.post(`${API}/api/feedback/create`, formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             toast.success("Feedback Form Created");

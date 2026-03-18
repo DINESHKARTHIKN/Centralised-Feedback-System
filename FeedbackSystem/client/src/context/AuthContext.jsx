@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+const API = "https://centralised-feedback-system.onrender.com";
 import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
@@ -23,7 +24,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try {
-            const res = await axios.post('https://centralised-feedback-system.onrender.com/api/auth/login', { email, password });
+            const res = await axios.post(`${API}/api/auth/login`, { email, password });
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user', JSON.stringify(res.data.user));
             axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (userData) => {
         try {
-            const res = await axios.post('https://centralised-feedback-system.onrender.com/api/auth/register', userData);
+            const res = await axios.post(`${API}/api/auth/register`, userData);
             localStorage.setItem('token', res.data.token);
             localStorage.setItem('user', JSON.stringify(res.data.user));
             axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;

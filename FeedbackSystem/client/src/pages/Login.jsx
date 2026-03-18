@@ -5,7 +5,7 @@ import { Lock, Mail, BookOpen, ArrowRight, Home } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
-export default function Login() {
+export default function Login(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useAuth();
