@@ -54,8 +54,20 @@ const responseSchema = new mongoose.Schema({
   semester: { type: Number }, // Snapshot of student's semester
 }, { timestamps: true });
 
+// Notification Schema
+const notificationSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  message: { type: String, required: true },
+  targetRoles: [{ type: String }], // empty means all
+  targetDepartments: [{ type: String }], // empty means all
+  targetYears: [{ type: Number }], // empty means all
+  sentBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] // Users who have read it
+}, { timestamps: true });
+
 const User = mongoose.model('User', userSchema);
 const FeedbackForm = mongoose.model('FeedbackForm', feedbackFormSchema);
 const Response = mongoose.model('Response', responseSchema);
+const Notification = mongoose.model('Notification', notificationSchema);
 
-module.exports = { User, FeedbackForm, Response };
+module.exports = { User, FeedbackForm, Response, Notification };

@@ -13,7 +13,7 @@ export default function Home() {
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-100">
                         FS
                     </div>
-                    <span className="text-xl font-bold text-gray-900">InsightFlow</span>
+                    <span className="text-xl font-bold text-gray-900">Feedback System</span>
                 </div>
                 <div className="flex items-center gap-6">
                     <div className="flex gap-4">
@@ -41,7 +41,7 @@ export default function Home() {
                     transition={{ duration: 0.6 }}
                 >
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider mb-6">
-                        <Zap size={14} /> Version 2.0 Now Live
+                        <Zap size={14} /> Version 1.0 Now Live
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-bold text-gray-900 tracking-tight leading-[1.1] mb-6">
                         Feedback that <br />

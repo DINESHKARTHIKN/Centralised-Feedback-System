@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth.middleware');
-const { Response, FeedbackForm } = require('../models');
+const { Response, FeedbackForm, User } = require('../models');
 
 // Get Stats for a specific Form (Admin)
 // Get Detailed Stats for a specific Form (Admin)
@@ -26,15 +26,36 @@ router.get('/form/:formId', auth, async (req, res) => {
         let sentimentTotal = 0;
         let sentimentCount = 0;
 
+        // Calculate total targeted users
+        let targetFilter = {};
+        if (form.targetRoles && form.targetRoles.length > 0 && !form.targetRoles.includes('All')) {
+            targetFilter.role = { $in: form.targetRoles };
+        }
+        if (form.targetDepartments && form.targetDepartments.length > 0) {
+            targetFilter.department = { $in: form.targetDepartments };
+        }
+        const totalTargeted = await User.countDocuments(targetFilter);
+
         // Initialize stats for each question
         form.questions.forEach(q => {
+            let initialDist = {};
+            if (q.questionType === 'Star') {
+                initialDist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            } else if (q.questionType === 'YesNo') {
+                initialDist = { 'Yes': 0, 'No': 0 };
+            } else if (q.questionType === 'MultipleChoice' && q.options) {
+                q.options.forEach(opt => {
+                    initialDist[opt] = 0;
+                });
+            }
+
             // Initialize for all types to track text responses too
             questionStats[q.questionText] = {
                 type: q.questionType,
                 total: 0,
                 count: 0,
                 average: 0,
-                distribution: {},
+                distribution: initialDist,
                 textAnswers: [] // specific for text/mixed types
             };
         });
@@ -50,29 +71,29 @@ router.get('/form/:formId', auth, async (req, res) => {
             semesterStats[sem]++;
 
             resp.answers.forEach(ans => {
-                if (questionStats[ans.questionText]) {
-                    // Numeric processing for Star/YesNo
-                    if (['Star', 'YesNo'].includes(questionStats[ans.questionText].type)) {
-                        let val = 0;
-                        if (ans.answer === 'Yes') val = 5;
-                        else if (ans.answer === 'No') val = 1;
-                        else val = parseInt(ans.answer) || 0;
+                const qStat = questionStats[ans.questionText];
+                if (qStat) {
+                    const qType = qStat.type;
 
-                        if (val > 0) {
-                            questionStats[ans.questionText].total += val;
-                            questionStats[ans.questionText].count++;
-
-                            if (!questionStats[ans.questionText].distribution[val])
-                                questionStats[ans.questionText].distribution[val] = 0;
-                            questionStats[ans.questionText].distribution[val]++;
+                    if (qType === 'Star') {
+                        let val = parseInt(ans.answer) || 0;
+                        if (val >= 1 && val <= 5) {
+                            qStat.total += val;
+                            qStat.count++;
+                            qStat.distribution[val] = (qStat.distribution[val] || 0) + 1;
+                        }
+                    } else if (qType === 'MultipleChoice' || qType === 'YesNo') {
+                        const val = ans.answer;
+                        if (val) {
+                            qStat.count++;
+                            qStat.distribution[val] = (qStat.distribution[val] || 0) + 1;
                         }
                     }
 
-                    // Collect text answers or qualitative data
-                    if (ans.answer && (typeof ans.answer === 'string' || typeof ans.answer === 'number')) {
-                        // Limit text answers to last 20 for preview to avoid payload bloat
-                        if (questionStats[ans.questionText].textAnswers.length < 20) {
-                            questionStats[ans.questionText].textAnswers.push(ans.answer);
+                    // Collect text answers for all types (useful for Text type)
+                    if (ans.answer && typeof ans.answer === 'string') {
+                        if (qStat.textAnswers.length < 50) {
+                            qStat.textAnswers.push(ans.answer);
                         }
                     }
 
@@ -90,7 +111,7 @@ router.get('/form/:formId', auth, async (req, res) => {
 
         Object.keys(questionStats).forEach(key => {
             const q = questionStats[key];
-            if (q.count > 0 && ['Star', 'YesNo'].includes(q.type)) {
+            if (q.count > 0 && q.type === 'Star') {
                 q.average = parseFloat((q.total / q.count).toFixed(2));
                 ratedQuestions.push({ question: key, average: q.average });
             }
@@ -132,6 +153,7 @@ router.get('/form/:formId', auth, async (req, res) => {
         res.json({
             formTitle: form.title,
             totalResponses,
+            totalTargeted,
             questionStats,
             highestRated,
             lowestRated,

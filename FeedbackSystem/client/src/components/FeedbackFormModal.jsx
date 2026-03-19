@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const FeedbackFormModal = ({ form, onClose, onSubmitSuccess }) => {
     const [answers, setAnswers] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isAnonymous, setIsAnonymous] = useState(false);
 
     const handleAnswerChange = (qIndex, value, questionText) => {
         setAnswers({
@@ -29,7 +30,8 @@ const FeedbackFormModal = ({ form, onClose, onSubmitSuccess }) => {
         try {
             await axios.post(`${API}/api/feedback/submit`, {
                 formId: form._id,
-                answers: formattedAnswers
+                answers: formattedAnswers,
+                isAnonymous
             });
             toast.success("Feedback Submitted!");
             onSubmitSuccess();
@@ -169,19 +171,30 @@ const FeedbackFormModal = ({ form, onClose, onSubmitSuccess }) => {
                         </form>
                     </div>
 
-                    <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-3xl">
-                        <button type="button" onClick={onClose} className="px-6 py-3 text-gray-600 font-bold hover:bg-gray-100 rounded-xl transition-colors">
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            form="feedback-form"
-                            disabled={isSubmitting}
-                            className="px-10 py-3 bg-indigo-600 text-white font-black rounded-xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
-                        >
-                            {isSubmitting ? 'Submitting Responses...' : 'Post Feedback'}
-                            {!isSubmitting && <CheckCircle className="h-5 w-5" />}
-                        </button>
+                    <div className="p-6 border-t border-gray-100 bg-gray-50 flex flex-col sm:flex-row sm:justify-between items-center gap-4 rounded-b-3xl">
+                        <label className="flex items-center gap-2 cursor-pointer select-none group">
+                            <input
+                                type="checkbox"
+                                className="w-5 h-5 text-indigo-600 bg-white border-gray-300 rounded focus:ring-[3px] focus:ring-indigo-500/30 transition-shadow cursor-pointer"
+                                checked={isAnonymous}
+                                onChange={(e) => setIsAnonymous(e.target.checked)}
+                            />
+                            <span className="text-sm font-bold text-gray-700 group-hover:text-indigo-600 transition-colors">Submit Anonymously</span>
+                        </label>
+                        <div className="flex gap-3 w-full sm:w-auto">
+                            <button type="button" onClick={onClose} className="flex-1 sm:flex-none px-6 py-3 text-gray-600 font-bold hover:bg-gray-100 rounded-xl transition-colors">
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                form="feedback-form"
+                                disabled={isSubmitting}
+                                className="flex-1 sm:flex-none px-10 py-3 bg-indigo-600 text-white font-black rounded-xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                                {isSubmitting ? 'Submitting Responses...' : 'Post Feedback'}
+                                {!isSubmitting && <CheckCircle className="h-5 w-5" />}
+                            </button>
+                        </div>
                     </div>
                 </motion.div>
             </div>

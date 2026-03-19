@@ -1,0 +1,22 @@
+{
+  "_id": "69bb839496f7952e96c15520",
+  "questions": [
+    {
+      "questionText": "Rating ",
+      "questionType": "Star",
+      "options": [],
+      "_id": "69bb839496f7952e96c15521"
+    },
+    {
+      "questionText": "Choice ",
+      "questionType": "MultipleChoice",
+      "options": [
+        "Good",
+        "excellent",
+        "average",
+        "bad"
+      ],
+      "_id": "69bb839496f7952e96c15522"
+    }
+  ]
+}

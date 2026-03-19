@@ -1,0 +1,17 @@
+{
+  "_id": "69bb83f796f7952e96c15538",
+  "answers": [
+    {
+      "questionText": "Rating ",
+      "answer": 5,
+      "sentimentScore": 0,
+      "_id": "69bb83f796f7952e96c15539"
+    },
+    {
+      "questionText": "Choice ",
+      "answer": "Good",
+      "sentimentScore": 0,
+      "_id": "69bb83f796f7952e96c1553a"
+    }
+  ]
+}
