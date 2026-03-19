@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-// const API = "https://centralised-feedback-system.onrender.com";
-const API = "http://localhost:5000";
+const API = "https://centralised-feedback-system.onrender.com";
+//const API = "http://localhost:5000";
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
     PieChart, Pie, Cell, AreaChart, Area, RadialBarChart, RadialBar
