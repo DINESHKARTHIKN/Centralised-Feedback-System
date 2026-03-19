@@ -25,7 +25,13 @@ app.use(limiter);
 const path = require('path');
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "https://centralisedfeedbacksystem.vercel.app"
+    ],
+    credentials: true
+}));
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(morgan('dev'));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -40,7 +46,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/feedback', feedbackRoutes);
-app.use('/api/analytics', analyticsRoutes);
+app.use('/api/stats', analyticsRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
