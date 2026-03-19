@@ -55,9 +55,16 @@ export default function Dashboard() {
     const [stats, setStats] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [selectedForm, setSelectedForm] = useState(null);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [analyticsView, setAnalyticsView] = useState('charts');
+    const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         if (user?.role === 'Admin') {
@@ -162,26 +169,37 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen bg-gray-50/50 flex overflow-hidden font-sans text-gray-800">
+            {/* --- Sidebar Backdrop --- */}
+            {isSidebarOpen && (
+                <div 
+                    className="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-40 lg:hidden"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
             {/* --- Sidebar --- */}
-            <motion.aside
-                initial={{ x: -280 }}
-                animate={{ x: isSidebarOpen ? 0 : -280 }}
-                className={`fixed inset-y-0 left-0 z-40 w-72 bg-white/80 backdrop-blur-xl border-r border-gray-200/50 lg:static lg:translate-x-0 ${isSidebarOpen ? 'block' : 'hidden lg:block'}`}
+            <aside
+                className={`fixed inset-y-0 left-0 z-50 w-72 bg-white/95 backdrop-blur-xl border-r border-gray-200/50 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} flex flex-col`}
             >
-                <div className="h-full flex flex-col p-6">
-                    <div className="flex items-center gap-3 px-2 mb-10">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200">
-                            FS
+                <div className="h-full flex flex-col p-6 overflow-y-auto custom-scrollbar">
+                    <div className="flex items-center justify-between px-2 mb-10">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-200">
+                                FS
+                            </div>
+                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+                                Feed Back
+                            </span>
                         </div>
-                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
-                            Feed Back
-                        </span>
+                        <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-gray-400 hover:text-gray-900 transition-colors">
+                            <X size={20} />
+                        </button>
                     </div>
 
                     <nav className="flex-1 space-y-2">
                         <SidebarBtn
                             active={activeTab === 'overview'}
-                            onClick={() => setActiveTab('overview')}
+                            onClick={() => { setActiveTab('overview'); setIsSidebarOpen(false); }}
                             icon={LayoutDashboard}
                             label="Dashboard"
                         />
@@ -189,14 +207,14 @@ export default function Dashboard() {
                             <>
                                 <SidebarBtn
                                     active={activeTab === 'forms'}
-                                    onClick={() => setActiveTab('forms')}
+                                    onClick={() => { setActiveTab('forms'); setIsSidebarOpen(false); }}
                                     icon={FileText}
                                     label="Forms Manager"
                                 />
                                 {stats && (
                                     <SidebarBtn
                                         active={activeTab === 'analytics'}
-                                        onClick={() => setActiveTab('analytics')}
+                                        onClick={() => { setActiveTab('analytics'); setIsSidebarOpen(false); }}
                                         icon={Activity}
                                         label="Live Analytics"
                                         badge="Active"
@@ -206,7 +224,7 @@ export default function Dashboard() {
                         ) : (
                             <SidebarBtn
                                 active={activeTab === 'history'}
-                                onClick={() => setActiveTab('history')}
+                                onClick={() => { setActiveTab('history'); setIsSidebarOpen(false); }}
                                 icon={History}
                                 label="My History"
                             />
@@ -215,30 +233,30 @@ export default function Dashboard() {
 
                     <div className="mt-auto pt-6 border-t border-gray-100 space-y-3">
                         <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer group">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-700 font-bold border border-white shadow-sm">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-700 font-bold border border-white shadow-sm shrink-0">
                                 {user?.name?.charAt(0)}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-semibold text-gray-900 truncate">{user?.name}</p>
                                 <p className="text-xs text-gray-500 truncate">{user?.role}</p>
                             </div>
-                            <button onClick={logout} className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                            <button onClick={logout} className="p-2 text-gray-400 hover:text-red-500 transition-colors shrink-0">
                                 <LogOut size={18} />
                             </button>
                         </div>
                     </div>
                 </div>
-            </motion.aside>
+            </aside>
 
             {/* --- Main Content --- */}
             <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
                 {/* Mobile Header */}
                 <div className="lg:hidden h-16 bg-white/80 backdrop-blur-md border-b border-gray-200/50 flex items-center justify-between px-4 sticky top-0 z-30">
-                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 text-gray-600">
-                        {isSidebarOpen ? <X /> : <Menu />}
+                    <button onClick={() => setIsSidebarOpen(true)} className="p-2 text-gray-600 hover:text-gray-900 transition-colors">
+                        <Menu />
                     </button>
-                    <span className="font-bold text-gray-900">InsightFlow</span>
-                    <div className="w-8" />
+                    <span className="font-bold text-gray-900">Feed Back</span>
+                    <div className="w-10" />
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar">
@@ -519,17 +537,17 @@ export default function Dashboard() {
                                                 <ResponsiveContainer width="100%" height="90%">
                                                     <BarChart
                                                         data={Object.entries(stats.questionStats).map(([key, val]) => ({
-                                                            name: key.length > 50 ? key.substring(0, 50) + '...' : key,
+                                                            name: key.length > (isMobile ? 15 : 50) ? key.substring(0, isMobile ? 15 : 50) + '...' : key,
                                                             fullName: key,
                                                             rating: val.average,
                                                             responses: val.count
                                                         }))}
                                                         layout="vertical"
-                                                        margin={{ left: 20, right: 30, top: 10, bottom: 10 }}
+                                                        margin={{ left: 0, right: isMobile ? 10 : 30, top: 10, bottom: 10 }}
                                                     >
                                                         <CartesianGrid strokeDasharray="3 3" horizontal={false} vertical={true} stroke="#f3f4f6" opacity={0.1} />
-                                                        <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
-                                                        <YAxis dataKey="name" type="category" width={350} tick={{ fontSize: 13, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+                                                        <XAxis type="number" domain={[0, 5]} axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: isMobile ? 10 : 12 }} />
+                                                        <YAxis dataKey="name" type="category" width={isMobile ? 90 : 350} tick={{ fontSize: isMobile ? 11 : 13, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
                                                         <Tooltip
                                                             cursor={{ fill: 'rgba(249, 250, 251, 0.05)' }}
                                                             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', padding: '12px', backgroundColor: '#fff' }}
