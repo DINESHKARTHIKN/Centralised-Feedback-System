@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import CreateFormModal from '../components/CreateFormModal';
 import FeedbackFormModal from '../components/FeedbackFormModal';
+import Chatbot from '../components/Chatbot';
 
 // --- Improved Component Styles ---
 const Card = ({ children, className = "", delay = 0, onClick }) => (
@@ -735,6 +736,7 @@ export default function Dashboard() {
                     onSubmitSuccess={() => { fetchUserForms(); fetchUserHistory(); }}
                 />
             )}
+            {user?.role !== 'Admin' && <Chatbot />}
         </div>
     );
 }
