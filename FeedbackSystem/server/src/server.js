@@ -46,7 +46,8 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/feedback', feedbackRoutes);
-app.use('/api/stats', analyticsRoutes);
+//app.use('/api/stats', analyticsRoutes);
+app.use('/api/analytics', analyticsRoutes);
 app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
